@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="uisual" content="Made with Uisual (uisual.com)">
+    <meta name="author" content="Derek Antrican">
+    <meta name="description" content="Current service incidents for Bulk Edit Calendar Events">
+    <meta name="referrer" content="unsafe-url">
+    <meta name="robots" content="index, follow">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="latestVersion.js" type="text/javascript"></script>
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="me" href="https://github.com/derekantrican">
+    <link rel="canonical" href="https://bulkeditcalendarevents.com/incidents.html">
+    <link rel="icon" type="image/png" href="images/icon.png" sizes="48x48">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+    <link rel="preload" as="style" href="style.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Bulk Edit Calendar Events - Service Incidents</title>
+    <style>
+      .incident-card {
+        background-color: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #ef5350;
+        text-align: left;
+      }
+      .incident-card.mitigated {
+        border-left-color: #ffa726;
+      }
+      .incident-card.resolved {
+        border-left-color: #66bb6a;
+      }
+      .incident-card h3 {
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #fff;
+      }
+      .incident-status {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 3px;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      .incident-status.active { background-color: #c62828; }
+      .incident-status.mitigated { background-color: #e65100; }
+      .incident-status.resolved { background-color: #2e7d32; }
+      .incident-section-label {
+        font-weight: bold;
+        margin-top: 1rem;
+        margin-bottom: 0.25rem;
+        color: #bbb;
+      }
+      .incident-versions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+      }
+      .incident-versions span {
+        background-color: rgba(255, 255, 255, 0.15);
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.85rem;
+        color: #ddd;
+      }
+      .incident-description {
+        color: #ddd;
+      }
+      .incident-description p {
+        margin: 0.4rem 0;
+      }
+      #incidents-loading {
+        text-align: center;
+        padding: 2rem;
+        color: #aaa;
+      }
+      #no-incidents {
+        text-align: center;
+        padding: 2rem;
+        color: #aaa;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header role="banner" class="ui-section-header">
+      <div class="ui-layout-container">
+        <div class="ui-section-header__layout ui-layout-flex">
+          <a href="index.html" role="link" aria-label="#" class="ui-section-header--logo">
+            <img src="images/icon_withtext.png"/>
+          </a>
+          <input type="checkbox" id="ui-section-header--menu-id">
+          <label for="ui-section-header--menu-id" class="ui-section-header--menu-icon"></label>
+          <nav role="navigation" class="ui-section-header--nav ui-layout-flex">
+            <a href="features.html" role="link" aria-label="#" class="ui-section-header--nav-link">Features</a>
+            <p class="spacer">|</p>
+            <a href="usecases.html" role="link" aria-label="#" class="ui-section-header--nav-link">Use cases</a>
+            <p class="spacer">|</p>
+            <a href="downloads.html" role="link" aria-label="#" class="ui-section-header--nav-link">Downloads</a>
+            <p class="spacer">|</p>
+            <a href="support.html" role="link" aria-label="#" class="ui-section-header--nav-link">Support</a>
+            <p class="spacer">|</p>
+            <a href="donate.html" role="link" aria-label="#" class="ui-section-header--nav-link">Donate</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main role="main">
+      <section class="ui-section-feature">
+        <div class="ui-layout-container left-aligned">
+          <h2 style="text-align: center; margin-top: 5rem;">Incidents</h2>
+          <div id="incidents-loading">Loading incidents...</div>
+          <div id="no-incidents">
+            <p>&#10004; All systems operational &mdash; no active incidents.</p>
+          </div>
+          <div id="incidents-container"></div>
+        </div>
+      </section>
+      <section class="ui-section-close">
+        <div class="ui-layout-container">
+          <div class="ui-layout-column-6 ui-layout-column-center">
+            <h2>Ready to get editing?</h2>
+            <div class="ui-component-cta ui-layout-flex">
+              <a href="installation.html" role="link" aria-label="#" class="ui-component-button ui-component-button-download-windows ui-component-button-icon latestWindows">
+                <svg fill="#fff" width="14" height="14" viewBox="-2.61977004 -2.61977004 92.56520808 92.83416708">
+                  <path d="M 0,12.40183 35.68737,7.5416 35.70297,41.96435 0.03321,42.16748 z m 35.67037,33.52906 0.0277,34.45332 -35.66989,-4.9041 -0.002,-29.77972 z M 39.99644,6.90595 87.31462,0 l 0,41.527 -47.31818,0.37565 z M 87.32567,46.25471 87.31457,87.59463 39.9964,80.91625 39.9301,46.17767 z"/>
+                </svg>
+                <span>Download for Windows</span>
+              </a>
+              <a href="#" role="link" aria-label="#" class="ui-component-button ui-component-button-download-mac ui-component-button-icon latestMacOS">
+                <svg fill="#fff" width="14" height="14" viewBox="0 0 170 170" xml:space="preserve">
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.27 2.13-9.51 3.24-12.76 3.35-4.93.21-9.84-1.96-14.75-6.52-3.13-2.73-7.05-7.41-11.76-14.04-5.05-7.14-9.2-15.42-12.44-24.86-3.47-10.2-5.21-20.07-5.21-29.59 0-10.94 2.36-20.37 7.08-28.28 3.71-6.34 8.65-11.35 14.83-15.04 6.18-3.69 12.86-5.57 20.04-5.7 3.92 0 9.06 1.21 15.44 3.61 6.36 2.41 10.45 3.62 12.25 3.62 1.35 0 5.91-1.42 13.65-4.24 7.31-2.62 13.49-3.71 18.56-3.28 13.72 1.11 24.02 6.52 30.87 16.25-12.27 7.44-18.34 17.86-18.2 31.22.13 10.41 3.88 19.08 11.25 25.97 3.35 3.18 7.09 5.64 11.24 7.39-.9 2.61-1.85 5.11-2.87 7.51zM119.11 7.24c0 8.16-2.98 15.78-8.93 22.84-7.18 8.39-15.86 13.23-25.27 12.48-.12-1.01-.19-2.06-.19-3.16 0-7.84 3.41-16.22 9.47-23.08 3.03-3.47 6.88-6.35 11.55-8.64 4.66-2.27 9.07-3.52 13.22-3.73.12 1.11.15 2.21.15 3.29z"/>
+                </svg>
+                <span>Download for Mac</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer role="contentinfo" class="ui-section-footer">
+      <div class="ui-layout-container">
+        <div class="ui-section-footer__layout ui-layout-flex">
+          <p class="ui-section-footer--copyright ui-text-note"><small>&copy; 2025 Bulk Edit Calendar Events</small></p>
+          <a href="privacypolicy.html" role="link">
+            Privacy Policy
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+  <script>
+    $(".latestWindows").attr("href", "installation.html");
+    $(".latestMacOS").attr("href", latestVersionData["updateMac"]["url"]);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+  <script>
+    (function () {
+      var API_URL = 'https://server.bulkeditcalendarevents.com/api/incidents';
+
+      function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(text));
+        return div.innerHTML;
+      }
+
+      function renderMarkdown(text) {
+        if (!text) return '';
+        if (typeof marked !== 'undefined' && marked.parse) {
+          var raw = marked.parse(text);
+          return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(raw) : escapeHtml(text);
+        }
+        return '<p>' + escapeHtml(text) + '</p>';
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '';
+        return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      }
+
+      function renderIncident(incident) {
+        var statusClass = incident.status || 'active';
+        var html = '<div class="incident-card ' + statusClass + '">';
+        html += '<h3>' + escapeHtml(incident.title);
+        html += ' <span class="incident-status ' + statusClass + '">' + escapeHtml(incident.status) + '</span>';
+        html += '</h3>';
+
+        var dates = '';
+        if (incident.startedAt) dates += 'Started: ' + formatDate(incident.startedAt);
+        if (incident.resolvedAt) dates += (dates ? ' &middot; ' : '') + 'Resolved: ' + formatDate(incident.resolvedAt);
+        if (dates) html += '<p style="font-size:0.85rem;color:#ccc;margin:0 0 0.5rem;">' + dates + '</p>';
+
+        html += '<p class="incident-section-label">Description</p>';
+        html += '<div class="incident-description">' + renderMarkdown(incident.description) + '</div>';
+
+        if (incident.cause) {
+          html += '<p class="incident-section-label">Cause</p>';
+          html += '<div class="incident-description">' + renderMarkdown(incident.cause) + '</div>';
+        }
+
+        if (incident.workaround) {
+          html += '<p class="incident-section-label">Workaround</p>';
+          html += '<div class="incident-description">' + renderMarkdown(incident.workaround) + '</div>';
+        }
+
+        if (incident.versionsAffected && incident.versionsAffected.length > 0) {
+          html += '<p class="incident-section-label">Versions Affected</p>';
+          html += '<div class="incident-versions">';
+          incident.versionsAffected.forEach(function (v) {
+            html += '<span>' + escapeHtml(v) + '</span>';
+          });
+          html += '</div>';
+        }
+
+        html += '</div>';
+        return html;
+      }
+
+      fetch(API_URL)
+        .then(function (res) { return res.json(); })
+        .then(function (incidents) {
+          document.getElementById('incidents-loading').style.display = 'none';
+
+          if (!incidents || incidents.length === 0) {
+            document.getElementById('no-incidents').style.display = 'block';
+            return;
+          }
+
+          var container = document.getElementById('incidents-container');
+          var html = '';
+          incidents.forEach(function (incident) {
+            html += renderIncident(incident);
+          });
+          container.innerHTML = html;
+        })
+        .catch(function () {
+          document.getElementById('incidents-loading').textContent = 'Unable to load incidents. Please try again later.';
+        });
+    })();
+  </script>
+</html>
